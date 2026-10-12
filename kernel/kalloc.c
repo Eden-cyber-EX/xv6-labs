@@ -80,3 +80,22 @@ kalloc(void)
     memset((char*)r, 5, PGSIZE); // fill with junk
   return (void*)r;
 }
+
+
+//lab2 sysinfo
+uint64
+count_free(void)
+{
+  struct run *r;
+  uint64 count = 0; //计数器
+
+  acquire(&kmem.lock);  //加锁，因为是全局变量，防止并发访问
+  r = kmem.freelist;
+  while(r)
+   {
+     r = r -> next;
+     count++;
+   }
+  release(&kmem.lock); //释放锁
+  return count * PGSIZE; //返回字节数
+}
